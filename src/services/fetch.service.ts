@@ -12,7 +12,7 @@ type Error = {
 
 type Response = Success | Error;
 
-export async function fetchApi(
+export async function fetchApi<T>(
   url: string,
   method: Method,
   body?: Record<string, any>,
@@ -34,7 +34,7 @@ export async function fetchApi(
     };
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as T;
   return {
     success: true,
     data,

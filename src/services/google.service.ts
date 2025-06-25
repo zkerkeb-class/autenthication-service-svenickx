@@ -22,20 +22,24 @@ export default class GoogleService {
         );
 
         if (!getUserResponse.success) {
-          await fetchApi(
-            `${process.env.DB_SERVICE_URL}auth/createUser`,
-            "post",
-            {
+          const [u] = await Promise.all([
+            fetchApi(`${process.env.DB_SERVICE_URL}auth/createUser`, "post", {
               email,
               firstname: given_name,
               lastname: family_name,
               emailVerified: email_verified,
               providerName: "google",
               providerId: sub,
-            }
-          );
+            }),
+            fetchApi(`${process.env.NOTIF_SERVICE_URL}user/register`, "post", {
+              email,
+            }),
+          ]);
+          if (u.success) {
+            user = u.data.data;
+          }
         } else {
-          user = getUserResponse.data;
+          user = getUserResponse.data.data;
         }
 
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
