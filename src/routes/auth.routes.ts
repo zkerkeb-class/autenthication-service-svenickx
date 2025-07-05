@@ -93,5 +93,6 @@ export default class AuthRoutes {
     );
 
     this.router.post("/register", this.authController.register);
+    this.router.post("/login", this.authController.login);
   }
 }
